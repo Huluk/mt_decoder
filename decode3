@@ -63,6 +63,7 @@ def run(f):
     print "EDGE_WEIGHT_FORMAT: FULL_MATRIX"
     print "EDGE_WEIGHT_SECTION"
     sentence_length = len(f)
+    # TODO extend by artificial start and end nodes
     for node1 in nodes:
         row = "\t"
         for node2 in nodes:
@@ -76,7 +77,7 @@ def run(f):
     print "EOF"
 
 def get_edge(group, node1, node2, sentence_length):
-    MAX = 999999999
+    MAX = 9999999
     if node1 == node2:
         pass
     elif group[node1.word] == group[node2.word]:

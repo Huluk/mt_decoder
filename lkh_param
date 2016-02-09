@@ -1,0 +1,2 @@
+PROBLEM_FILE = example.tsp
+TOUR_FILE = output/best_tour
