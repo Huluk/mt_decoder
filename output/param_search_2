@@ -1,0 +1,178 @@
+k: 1	s: 1
+Total corpus log probability (LM+TM): -1402.061933
+k: 1	s: 2
+Total corpus log probability (LM+TM): -1388.759267
+k: 1	s: 3
+Total corpus log probability (LM+TM): -1385.343090
+k: 1	s: 4
+Total corpus log probability (LM+TM): -1385.050691
+k: 1	s: 5
+Total corpus log probability (LM+TM): -1384.609459
+k: 1	s: 10
+Total corpus log probability (LM+TM): -1384.609459
+k: 1	s: 20
+Total corpus log probability (LM+TM): -1384.609459
+k: 1	s: 50
+Total corpus log probability (LM+TM): -1384.609459
+k: 1	s: 100
+Total corpus log probability (LM+TM): -1384.609459
+k: 1	s: 1000
+Total corpus log probability (LM+TM): -1384.609459
+k: 2	s: 1
+Total corpus log probability (LM+TM): -1362.762891
+k: 2	s: 2
+Total corpus log probability (LM+TM): -1343.752074
+k: 2	s: 3
+Total corpus log probability (LM+TM): -1338.541163
+k: 2	s: 4
+Total corpus log probability (LM+TM): -1334.696891
+k: 2	s: 5
+Total corpus log probability (LM+TM): -1334.196966
+k: 2	s: 10
+Total corpus log probability (LM+TM): -1333.392908
+k: 2	s: 20
+Total corpus log probability (LM+TM): -1333.392908
+k: 2	s: 50
+Total corpus log probability (LM+TM): -1333.392908
+k: 2	s: 100
+Total corpus log probability (LM+TM): -1333.392908
+k: 2	s: 1000
+Total corpus log probability (LM+TM): -1333.392908
+k: 3	s: 1
+Total corpus log probability (LM+TM): -1345.639299
+k: 3	s: 2
+Total corpus log probability (LM+TM): -1328.962373
+k: 3	s: 3
+Total corpus log probability (LM+TM): -1324.376775
+k: 3	s: 4
+Total corpus log probability (LM+TM): -1316.380818
+k: 3	s: 5
+Total corpus log probability (LM+TM): -1315.501046
+k: 3	s: 10
+Total corpus log probability (LM+TM): -1313.464937
+k: 3	s: 20
+Total corpus log probability (LM+TM): -1313.464937
+k: 3	s: 50
+Total corpus log probability (LM+TM): -1313.464937
+k: 3	s: 100
+Total corpus log probability (LM+TM): -1313.464937
+k: 3	s: 1000
+Total corpus log probability (LM+TM): -1313.464937
+k: 4	s: 1
+Total corpus log probability (LM+TM): -1342.807854
+k: 4	s: 2
+Total corpus log probability (LM+TM): -1324.213261
+k: 4	s: 3
+Total corpus log probability (LM+TM): -1315.681534
+k: 4	s: 4
+Total corpus log probability (LM+TM): -1309.652005
+k: 4	s: 5
+Total corpus log probability (LM+TM): -1309.187413
+k: 4	s: 10
+Total corpus log probability (LM+TM): -1308.146103
+k: 4	s: 20
+Total corpus log probability (LM+TM): -1308.146103
+k: 4	s: 50
+Total corpus log probability (LM+TM): -1308.146103
+k: 4	s: 100
+Total corpus log probability (LM+TM): -1308.146103
+k: 4	s: 1000
+Total corpus log probability (LM+TM): -1308.146103
+k: 5	s: 1
+Total corpus log probability (LM+TM): -1341.825864
+k: 5	s: 2
+Total corpus log probability (LM+TM): -1322.957096
+k: 5	s: 3
+Total corpus log probability (LM+TM): -1316.249209
+k: 5	s: 4
+Total corpus log probability (LM+TM): -1310.810426
+k: 5	s: 5
+Total corpus log probability (LM+TM): -1308.053523
+k: 5	s: 10
+Total corpus log probability (LM+TM): -1306.611861
+k: 5	s: 20
+Total corpus log probability (LM+TM): -1306.611861
+k: 5	s: 50
+Total corpus log probability (LM+TM): -1306.611861
+k: 5	s: 100
+Total corpus log probability (LM+TM): -1306.611861
+k: 5	s: 1000
+Total corpus log probability (LM+TM): -1306.611861
+k: 10	s: 1
+Total corpus log probability (LM+TM): -1336.184603
+k: 10	s: 2
+Total corpus log probability (LM+TM): -1318.725901
+k: 10	s: 3
+Total corpus log probability (LM+TM): -1312.418556
+k: 10	s: 4
+Total corpus log probability (LM+TM): -1306.352239
+k: 10	s: 5
+Total corpus log probability (LM+TM): -1305.925973
+k: 10	s: 10
+Total corpus log probability (LM+TM): -1301.844673
+k: 10	s: 20
+Total corpus log probability (LM+TM): -1301.298956
+k: 10	s: 50
+Total corpus log probability (LM+TM): -1301.298956
+k: 10	s: 100
+Total corpus log probability (LM+TM): -1301.298956
+k: 10	s: 1000
+Total corpus log probability (LM+TM): -1301.298956
+k: 20	s: 1
+Total corpus log probability (LM+TM): -1334.379423
+k: 20	s: 2
+Total corpus log probability (LM+TM): -1318.917223
+k: 20	s: 3
+Total corpus log probability (LM+TM): -1312.337038
+k: 20	s: 4
+Total corpus log probability (LM+TM): -1305.718216
+k: 20	s: 5
+Total corpus log probability (LM+TM): -1305.181770
+k: 20	s: 10
+Total corpus log probability (LM+TM): -1301.071978
+k: 20	s: 50
+Total corpus log probability (LM+TM): -1300.526262
+k: 20	s: 100
+Total corpus log probability (LM+TM): -1300.526262
+k: 20	s: 1000
+Total corpus log probability (LM+TM): -1300.526262
+k: 50	s: 1
+Total corpus log probability (LM+TM): -1334.379423
+k: 50	s: 2
+Total corpus log probability (LM+TM): -1318.917223
+k: 50	s: 3
+Total corpus log probability (LM+TM): -1312.579469
+k: 50	s: 4
+Total corpus log probability (LM+TM): -1306.690751
+k: 50	s: 5
+Total corpus log probability (LM+TM): -1305.181770
+k: 50	s: 10
+Total corpus log probability (LM+TM): -1301.380895
+k: 50	s: 20
+Total corpus log probability (LM+TM): -1300.963619
+k: 50	s: 50
+Total corpus log probability (LM+TM): -1300.526262
+k: 50	s: 100
+Total corpus log probability (LM+TM): -1300.526262
+k: 50	s: 1000
+Total corpus log probability (LM+TM): -1300.526262
+k: 100	s: 1
+Total corpus log probability (LM+TM): -1334.379423
+k: 100	s: 2
+Total corpus log probability (LM+TM): -1318.917223
+k: 100	s: 3
+Total corpus log probability (LM+TM): -1312.579469
+k: 100	s: 4
+Total corpus log probability (LM+TM): -1306.690751
+k: 100	s: 5
+Total corpus log probability (LM+TM): -1305.181770
+k: 100	s: 10
+Total corpus log probability (LM+TM): -1301.380895
+k: 100	s: 20
+Total corpus log probability (LM+TM): -1300.963619
+k: 100	s: 50
+Total corpus log probability (LM+TM): -1300.526262
+k: 100	s: 100
+Total corpus log probability (LM+TM): -1300.526262
+k: 100	s: 1000
+Total corpus log probability (LM+TM): -1300.526262
