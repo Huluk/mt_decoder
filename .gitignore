@@ -1,2 +1,7 @@
 *.pyc
 data/tmp*
+*.aux
+*.bbl
+*.blg
+*.fff
+*.lof
