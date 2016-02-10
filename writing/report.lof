@@ -1,0 +1,2 @@
+\contentsline {figure}{\numberline {1}{\ignorespaces Performance of decoder without reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.\relax }}{4}
+\contentsline {figure}{\numberline {2}{\ignorespaces Performance of decoder with local reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.\relax }}{5}

@@ -1,0 +1,17 @@
+\begin{thebibliography}{}
+
+\bibitem[Helsgaun, 2006]{Helsgaun2006}
+Helsgaun, K. (2006).
+\newblock An effective implementation of k-opt moves for the lin-kernighan tsp
+  heuristic.
+\newblock {\em DATALOGISKE SKRIFTER (Writings on Computer Science)}, 109.
+
+\bibitem[Zaslavskiy et~al., 2009]{zaslavskiy2009}
+Zaslavskiy, M., Dymetman, M., and Cancedda, N. (2009).
+\newblock Phrase-based statistical machine translation as a traveling salesman
+  problem.
+\newblock {\em Proceedings of the Joint Conference of the 47th Annual Meeting
+  of the ACL and the 4th International Joint Conference on Natural Language
+  Processing of the AFNLP}, 1:333--341.
+
+\end{thebibliography}
