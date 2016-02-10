@@ -154,7 +154,6 @@ def get_lm_probs(start_words, words):
     for word in words:
         (lm_state, word_logprob) = lm.score(lm_state, word)
         logprob += word_logprob
-        lm_state = (word,)
     return logprob
 
 for f in french:
