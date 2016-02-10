@@ -1,2 +1,2 @@
-PROBLEM_FILE = example.tsp
+PROBLEM_FILE = data/example.tsp
 TOUR_FILE = output/best_tour
