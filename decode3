@@ -5,6 +5,7 @@ import sys
 import os
 import models
 from math import log
+from random import random
 from collections import namedtuple, defaultdict
 
 Inf = float("inf")
@@ -36,6 +37,7 @@ for word in set(sum(french,())):
         tm[(word,)] = [models.phrase(word, 0.0)]
 
 Node = namedtuple("node", "logprob, word, word_index, i, j, biphrase")
+Phrase = namedtuple("phrase_with_id", "english, logprob, id")
 START_SYMBOL = '<s>'
 MAX = 9999999
 
@@ -48,6 +50,7 @@ def translate(f):
         for j in xrange(i+1,len(f)+1):
             if f[i:j] in tm:
                 for phrase in tm[f[i:j]]:
+                    phrase = Phrase(phrase.english, phrase.logprob, random())
                     for (i_w, word) in enumerate(f[i:j]):
                         word_index = i+i_w
                         n = Node(phrase.logprob, word, word_index, i, j, phrase)
@@ -83,16 +86,16 @@ def translate(f):
     outfile.close()
     os.system("./LKH lkh_param > /dev/null")
     best_tour = read_best_tour('data/tmp_best_tour')
-    current_word = None
+    current_word_index = None
     translation = []
     for i in best_tour:
         node = nodes[i-1]
-        if node.word != current_word:
-            current_word = node.word
-            phrase = node.biphrase.english
-            if not phrase in translation:
+        if node.word_index != current_word_index:
+            current_word_index = node.word_index
+            phrase = node.biphrase
+            if len(translation) == 0 or phrase != translation[-1]:
                 translation.append(phrase)
-    return ' '.join(translation)
+    return ' '.join([t.english for t in translation])
 
 def get_edge(groups, node1, node2, sentence_length):
     if node1 == node2:
@@ -145,5 +148,5 @@ def get_lm_probs(start_word, words):
         lm_state = (word,)
     return logprob
 
-for f in french:
+for f in french[22:23]:
     print translate(f)
