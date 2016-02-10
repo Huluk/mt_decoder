@@ -21,10 +21,14 @@ optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxi
         type="int", help="Number of sentences to decode (default=no limit)")
 optparser.add_option("-k", "--translations-per-phrase", dest="k", default=1, type="int",
         help="Limit on number of translations to consider per phrase (default=1)")
-# optparser.add_option("-K", "--negative-cycle-cost", dest="K", default=1, type="float",
-#         help="Cost subtracted for each step in a group cycle in AGTSP->STSP (default=1)")
 optparser.add_option("-v", "--verbose", dest="verbose", action="store_true",
         default=False, help="Verbose mode (default=off)")
+optparser.add_option("-1", "--lambda1", dest="l1", default=1, type="float",
+        help="Lambda 1 (translation model)")
+optparser.add_option("-2", "--lambda2", dest="l2", default=1, type="float",
+        help="Lambda 2 (language model)")
+optparser.add_option("-3", "--lambda3", dest="l3", default=1, type="float",
+        help="Lambda 3 (translation model)")
 opts = optparser.parse_args()[0]
 
 tm = models.TM(opts.tm, opts.k)
@@ -127,7 +131,7 @@ def get_edge(groups, node1, node2, sentence_length):
             else:
                 prev_word = ref_node.biphrase.english.split()[-1]
                 lm_probs = get_lm_probs(prev_word, node2.biphrase.english.split())
-            return -(node2.logprob + lm_probs + log_diagonality)
+            return -(opts.l1*node2.logprob + opts.l2*lm_probs + opts.l3*log_diagonality)
     return MAX
 
 def read_best_tour(path):
