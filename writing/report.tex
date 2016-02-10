@@ -82,11 +82,8 @@ The conclusions to draw from these results are:
 %	Q 2
 %----------------------------------------------------------------------------------------
 \section*{Q2}
-We modified the old $h(j,e)$ so that each recursion step reads two phrases
-instead of one. The second of these phrases (in the French sentence) may be
-the empty phrase $\varepsilon$. The two phrases are always swapped in the
-translation. If the second phrase was $\varepsilon$, swapping has no effect
-on the translation. Thus the translation is equivalent to a non-swap.
+We modified the old $h(j,e)$ so that each recursion step reads two French phrases
+instead of one. The second of these phrases may be either an actual phrase or an artificial  empty phrase $\varepsilon$, which we have added to the translation dictionary. The $\varepsilon$ phrase is an empty string, which translates with probability one to an empty string. The two read phrases are always swapped in the translation. In case of the second phrase being $\varepsilon$, the swapping is only nominal and the resulting translation is as if no swapping was performed.
 Our full definition of $h(j,e)$ is specified as follows:
 
 $h (0 \nocomma, e) = \left\{ \begin{array}{l}
@@ -107,20 +104,13 @@ with $0 \leq i < c \leq j$, $0 \leq k \leq m$, $e' \in V_E$, $e_1 \ldots e_k
 \in t (f_{c + 1} \ldots f_j) \cup \{ \varepsilon \}$,\\
 and $e_{k + 1} \ldots e_m e \in t (f_{i + 1} \ldots f_c)$.
 
-python
+
 
 %----------------------------------------------------------------------------------------
 %	Q 3
 %----------------------------------------------------------------------------------------
 \section*{Q3}
-For each French sentence of length $n$, we loop over all $n$ possible
-stacks. In each stack, we look at the top $s$ hypotheses and expand them.
-In each expansion, the algorithm contemplates all possible combinations of
-the first $k$ translations of two French phrases, where it explores phrase
-lengths of no more than $n$. Finally, the algorithm calculates the language
-model probability of this combination. In this step, the algorithm has to
-iterate over up to $2 t$ words, where $t$ is the maximum length of a
-translation phrase. Thus the overall complexity is as follows:
+For each French sentence of length $n$, we loop over all $n$ possible stacks. In each stack, we look at the top $s$ hypotheses and expand them. To perform an expansion we choose two consecutive phrases (the second of which might be $\varepsilon$), swap them, and consider all possible combinations of the first $k$ translations of each phrase. The maximum considered length of phrase is $n$. Finally, the algorithm calculates the language model probability of the generated two-phrase translation. In this step, the algorithm has to iterate over up to $2 t$ words, where $t$ is the maximum length of a translation phrase. Thus the overall complexity is as follows:
 
 \[
 \mathcal{O}(n \cdot s) \cdot \mathcal{O}({(n \cdot k)}^2)
