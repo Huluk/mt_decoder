@@ -32,7 +32,7 @@ optparser.add_option("-3", "--lambda3", dest="l3", default=1, type="float",
 opts = optparser.parse_args()[0]
 
 tm = models.TM(opts.tm, opts.k)
-lm = models.LM(opts.lm) # assumes bigram model!
+lm = models.LM(opts.lm)
 french = [tuple(line.strip().split()) for line in open(opts.input).readlines()[:opts.num_sents]]
 
 # tm should translate unknown words as-is with probability 1
@@ -118,7 +118,7 @@ def get_edge(groups, node1, node2, sentence_length):
                 log_diagonality = -20
             else:
                 log_diagonality = log(1-distortion)
-            # if node2.i == ref_node.j:
+            # if node2.i == ref_node.j: # force diagonal translation
             #     log_diagonality = 0
             # else:
             #     return MAX
