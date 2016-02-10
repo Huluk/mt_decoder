@@ -4,6 +4,7 @@ import optparse
 import sys
 import os
 import models
+from math import log
 from collections import namedtuple, defaultdict
 
 Inf = float("inf")
@@ -35,21 +36,23 @@ for word in set(sum(french,())):
         tm[(word,)] = [models.phrase(word, 0.0)]
 
 Node = namedtuple("node", "logprob, word, word_index, i, j, biphrase")
+START_SYMBOL = '<s>'
 MAX = 9999999
 
 def translate(f):
     # make AGTSP
-    nodes = [Node(0.0, '<s>', -1, -1, 0, models.phrase('', 0.0))]
+    nodes = [Node(0.0, START_SYMBOL, -1, -1, 0, models.phrase('', 0.0))]
     groups = defaultdict(list) # french word => [tsp_tuple, ...]
-    groups[nodes[0].word] = [nodes[0]] # add startword group
+    groups[nodes[0].word_index] = [nodes[0]] # add startword group
     for i in xrange(len(f)):
         for j in xrange(i+1,len(f)+1):
             if f[i:j] in tm:
                 for phrase in tm[f[i:j]]:
                     for (i_w, word) in enumerate(f[i:j]):
-                        n = Node(phrase.logprob, word, i+i_w, i, j, phrase)
+                        word_index = i+i_w
+                        n = Node(phrase.logprob, word, word_index, i, j, phrase)
                         nodes.append(n)
-                        groups[word] = groups[word] + [n]
+                        groups[word_index] = groups[word_index] + [n]
                         # we can infer graph connection by index:
                         # connections from j to i' for group(j) != group(i')
                         # with edge cost: 1/Z * exp(lambda_k * h_k)
@@ -94,35 +97,39 @@ def translate(f):
 def get_edge(groups, node1, node2, sentence_length):
     if node1 == node2:
         pass
-    elif groups[node1.word] == groups[node2.word]:
-        i1 = groups[node1.word].index(node1)
-        i2 = groups[node2.word].index(node2)
-        if i2 == (i1+1) % len(groups[node1.word]):
+    elif groups[node1.word_index] == groups[node2.word_index]:
+        i1 = groups[node1.word_index].index(node1)
+        i2 = groups[node2.word_index].index(node2)
+        if i2 == (i1+1) % len(groups[node1.word_index]):
             return -MAX # -K
     else:
-        group = groups[node1.word]
+        group = groups[node1.word_index]
         i = group.index(node1)
         ref_node = group[(i + 1) % len(group)]
         if ref_node.biphrase == node2.biphrase:
             if node2.word_index == ref_node.word_index + 1:
                 return 0
-        elif node2 in groups[0]:
-            if ref_node in groups[-1]:
+        elif node2 in groups[-1]:
+            if ref_node.word_index == sentence_length - 1:
                 # going from end to start
                 return 0
         elif node2.word_index == node2.i and ref_node.word_index + 1 == ref_node.j:
-            distortion = -float(abs(node2.i - ref_node.j - 1)) / sentence_length
-            if ref_node in groups[0]:
+            distortion = float(abs(node2.i - ref_node.j - 1)) / sentence_length
+            if distortion >= 1.0:
+                log_diagonality = -100
+            else:
+                log_diagonality = log(1-distortion)
+            if ref_node in groups[-1]:
                 lm_probs = 0.0
             else:
                 prev_word = ref_node.biphrase.english.split()[-1]
                 lm_probs = get_lm_probs(prev_word, node2.biphrase.english.split())
-            return -(node2.logprob + lm_probs + distortion)
+            return -(node2.logprob + lm_probs + log_diagonality)
     return MAX
 
 def read_best_tour(path):
     infile = open(path)
-    best_tour = [int(line) for line in infile.readlines() # TODO adjust index 
+    best_tour = [int(line) for line in infile.readlines()
             if line.rstrip().isdigit()]
     start_index = best_tour.index(1)
     best_tour = best_tour[(start_index+1):] + best_tour[0:start_index]
