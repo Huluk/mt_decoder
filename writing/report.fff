@@ -1,0 +1,50 @@
+\begin{figure}
+\centering
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d1_change_k.png}
+\caption{Increasing maximum number of translations, range [1-100].}
+\end{subfigure}
+\hskip2em
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d1_change_k_to10.png}
+\caption{Increasing maximum number of translations, range [1-10].}
+\end{subfigure}
+\hskip2em
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d1_change_s.png}
+\caption{Increasing stack size, range [1-100].}
+\end{subfigure}
+\hskip2em
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d1_change_s_to10.png}
+\caption{Increasing stack size, range [1-10].}
+\end{subfigure}
+\caption{Performance of decoder without reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}
+\centering
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d2_change_k.png}
+\caption{Increasing maximum number of translations, range [1-100].}
+\end{subfigure}
+\hskip2em
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d2_change_k_to10.png}
+\caption{Increasing maximum number of translations, range [1-10].}
+\end{subfigure}
+\hskip2em
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d2_change_s.png}
+\caption{Increasing stack size, range [1-100].}
+\end{subfigure}
+\hskip2em
+\begin{subfigure}{.45\linewidth}
+\includegraphics[scale=0.45]{d2_change_s_to10.png}
+\caption{Increasing stack size, range [1-10].}
+\end{subfigure}
+\caption{Performance of decoder with local reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.}
+\end{figure}
+\efloatseparator
+ 
