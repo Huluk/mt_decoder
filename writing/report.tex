@@ -49,6 +49,8 @@ Changing the stack size has a similar effect, although improvement tapers out ev
 
 Qualitatively, the difference between translations produced by the maximally limited system (k=1 and s=1) and one which produces the highest scoring output (k=50 and s=10) is that the latter text is more fluent and idiomatic,  yet the meaning is equally difficult to grasp and there is no difference between the levels of syntactic correctness.
 
+We did not investigate how parameter changes affect decoding speed. Simple timing methods seemed to be neither sensitive nor reliable enough to uncover any interesting trends for values of k and s in the range [1-100]. We did not investigate higher values because they did not offer improvement in total log probability.
+
 The conclusions to draw from these results are:
 (a) the intuitive insight that phrases can have multiple good translations proves to be important. Increasing the maximum number of possible translations per phrase does improve output quality.
 (b) the pruning heuristics used in decoding are justifiable, since the best translation really can be found by searching within the top few hypothesis in each stack. The best hypothesis is not always the very top one, as witnessed by the sharp increase in log probability when stack size is changed to 2, but it seems to almost always be one of the top 5 or so hypothesis.
@@ -56,16 +58,16 @@ The conclusions to draw from these results are:
 
 \begin{figure}
 	\centering
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d1_k.png}
+	\begin{subfigure}{.8\linewidth}
+		\includegraphics[scale=.75]{d1_k.png}
 		\caption{Increasing maximum number of translations, range [1-100].}
 	\end{subfigure}
 	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d1_s.png}
+	\begin{subfigure}{.8\linewidth}
+		\includegraphics[scale=.75]{d1_s.png}
 		\caption{Increasing stack size, range [1-100].}
 	\end{subfigure}
-	\caption{Performance of decoder without reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.}
+	\caption{Performance of decoder without reordering.}
 \end{figure}
 
 %----------------------------------------------------------------------------------------
@@ -129,19 +131,44 @@ This approach provides for a simple implementation. We do not need to check if t
 %----------------------------------------------------------------------------------------
 \section*{Q6}
 
+The effects of k and s on speed are much more noticeable that for the simple decoder.
+
+\begin{figure}
+	\centering
+	\begin{subfigure}{.8\linewidth}
+		\includegraphics[scale=.75]{d2_k.png}
+		\caption{Increasing maximum number of translations, range [1-100].}
+	\end{subfigure}
+	\hskip2em
+	\begin{subfigure}{.8\linewidth}
+		\includegraphics[scale=.75]{d2_s.png}
+		\caption{Increasing stack size, range [1-100].}
+	\end{subfigure}
+	\caption{Performance of decoder with local reordering.}
+\end{figure}
 
 \begin{figure}
 	\centering
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d2_k.png}
-		\caption{Increasing maximum number of translations, range [1-100].}
+		\includegraphics[scale=.45]{d1_speed_k.png}
+		\caption{Decoding time for the basic decoder.}
 	\end{subfigure}
 	\hskip2em
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d2_s.png}
+		\includegraphics[scale=.45]{d1_speed_s.png}
+		\caption{Decoding time for the basic decoder.}
+	\end{subfigure}
+	\hskip2em
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[scale=.45]{d2_speed_k.png}
+		\caption{Decoding time for the decoder with reordering.}
+	\end{subfigure}
+	\hskip2em
+	\begin{subfigure}{.45\linewidth}
+		\includegraphics[scale=.45]{d2_speed_s.png}
 		\caption{Increasing stack size, range [1-100].}
 	\end{subfigure}
-	\caption{Performance of decoder with local reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.}
+	\caption{Decoding time for the decoder with reordering.}
 \end{figure}
 
 %----------------------------------------------------------------------------------------
@@ -156,6 +183,19 @@ Our implementation includes the following steps:
 
 We transform a sentence into a asymmetric graph by following the procedure described in \cite{zaslavskiy2009}. We extract from the French sentence all phrases; for each phrase we retrieve all of its possible translations and for each of these we create a biphrase (French phrase, English translation). Then we create nodes of the graph by generating all possible pairs of a French word taken from the sentence and a biphrase of which this word is a part. Having crated all the nodes, we decide on the cost of each possible directed edge, again following the approach described in the article. We do not transform our graph to a symmetric one, since the TSP solver we use is capable of handling problems specified as asymmetric graphs.
 
+\begin{figure}
+	\centering
+	\begin{subfigure}{.8\linewidth}
+		\includegraphics[scale=.75]{d2_k.png}
+		\caption{Increasing maximum number of translations, range [1-100].}
+	\end{subfigure}
+	\hskip2em
+	\begin{subfigure}{.8\linewidth}
+		\includegraphics[scale=.75]{d2_s.png}
+		\caption{Increasing stack size, range [1-100].}
+	\end{subfigure}
+	\caption{Performance of TSP-besed decoder.}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %	BIBLIOGRAPHY
