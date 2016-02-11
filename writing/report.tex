@@ -8,6 +8,7 @@
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 \usepackage{subcaption}
+\usepackage[justification=centering]{caption}
 \usepackage[nomarkers,figuresonly]{endfloat}
 \usepackage[margin=0.9in]{geometry}
 \usepackage{sectsty}
@@ -150,25 +151,15 @@ The effects of k and s on speed are much more noticeable that for the simple dec
 \begin{figure}
 	\centering
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=.45]{d1_speed_k.png}
-		\caption{Decoding time for the basic decoder.}
+		\includegraphics[scale=.55]{k_time.png}
+		\caption{Decoding time as function of maximum number of translations.}
 	\end{subfigure}
 	\hskip2em
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=.45]{d1_speed_s.png}
-		\caption{Decoding time for the basic decoder.}
+		\includegraphics[scale=.55]{s_time.png}
+		\caption{Decoding time as a function of stack size.}
 	\end{subfigure}
-	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=.45]{d2_speed_k.png}
-		\caption{Decoding time for the decoder with reordering.}
-	\end{subfigure}
-	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=.45]{d2_speed_s.png}
-		\caption{Increasing stack size, range [1-100].}
-	\end{subfigure}
-	\caption{Decoding time for the decoder with reordering.}
+	\caption{Decoding time for the basic decoder and decoder with reordering.}
 \end{figure}
 
 %----------------------------------------------------------------------------------------
