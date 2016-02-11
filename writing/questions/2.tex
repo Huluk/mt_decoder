@@ -1,9 +1,12 @@
 \section*{Q2}
-We modified the old $h(j,e)$ so that each recursion step reads two phrases
-instead of one. The second of these phrases (in the French sentence) may be
-the empty phrase $\varepsilon$. The two phrases are always swapped in the
-translation. If the second phrase was $\varepsilon$, swapping has no effect
-on the translation. Thus the translation is equivalent to a non-swap.
-Our full definition of $h(j,e)$ is specified as follows:
+We modified the old $h(j,e)$ so that each recursion step reads two French
+phrases +instead of one. The second of these phrases may be either an actual
+phrase or an artificial  empty phrase $\varepsilon$, which we have added to
+the translation dictionary. The $\varepsilon$ phrase is an empty string,
+which translates with probability one to an empty string. The two read
+phrases are always swapped in the translation. In case of the second phrase
+being $\varepsilon$, the swapping is only nominal and the resulting
+translation is as if no swapping was performed.  Our full definition of
+$h(j,e)$ is specified as follows:
 
 \input{figures/h.tex}

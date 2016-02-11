@@ -2,18 +2,21 @@
 %	PACKAGES AND DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[11pt]{article}
+\documentclass[11pt,a4paper]{article}
 
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 \usepackage{subcaption}
 \usepackage[justification=centering]{caption}
-\usepackage[nomarkers,figuresonly]{endfloat}
+\usepackage[nomarkers,figuresonly,nofiglist]{endfloat}
 \usepackage[margin=0.9in]{geometry}
 \usepackage{sectsty}
 \sectionfont{\fontsize{12}{15}\selectfont}
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
+\usepackage{todonotes}
+\usepackage{units} % for nice fractions \nicefrac{}{}
+\usepackage[hidelinks=true]{hyperref}
 
 \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number
 
