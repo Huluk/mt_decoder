@@ -1,0 +1,161 @@
+#!/usr/bin/env python
+
+import optparse
+import sys
+import os
+import models
+from math import log
+from random import random
+from collections import namedtuple, defaultdict
+
+Inf = float("inf")
+
+optparser = optparse.OptionParser()
+optparser.add_option("-i", "--input", dest="input", default="data/input",
+        help="File containing sentences to translate (default=data/input)")
+optparser.add_option("-t", "--translation-model", dest="tm", default="data/tm",
+        help="File containing translation model (default=data/tm)")
+optparser.add_option("-l", "--language-model", dest="lm", default="data/lm",
+        help="File containing ARPA-format bigram model (default=data/lm)")
+optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxint,
+        type="int", help="Number of sentences to decode (default=no limit)")
+optparser.add_option("-k", "--translations-per-phrase", dest="k", default=1, type="int",
+        help="Limit on number of translations to consider per phrase (default=1)")
+optparser.add_option("-v", "--verbose", dest="verbose", action="store_true",
+        default=False, help="Verbose mode (default=off)")
+optparser.add_option("-1", "--lambda1", dest="l1", default=1, type="float",
+        help="Lambda 1 (translation model)")
+optparser.add_option("-2", "--lambda2", dest="l2", default=1, type="float",
+        help="Lambda 2 (language model)")
+optparser.add_option("-3", "--lambda3", dest="l3", default=1, type="float",
+        help="Lambda 3 (translation model)")
+opts = optparser.parse_args()[0]
+
+tm = models.TM(opts.tm, opts.k)
+lm = models.LM(opts.lm)
+french = [tuple(line.strip().split()) for line in open(opts.input).readlines()[:opts.num_sents]]
+
+# tm should translate unknown words as-is with probability 1
+for word in set(sum(french,())):
+    if (word,) not in tm:
+        tm[(word,)] = [models.phrase(word, 0.0)]
+
+Node = namedtuple("node", "logprob, word, word_index, i, j, biphrase")
+Phrase = namedtuple("phrase_with_id", "english, logprob, id")
+START_SYMBOL = '<s>'
+MAX = 9999999
+K = MAX
+
+def translate(f):
+    nodes, groups = make_agtsp(f)
+    write_atsp("data/tmp.lkh", f, nodes, groups)
+    os.system("./LKH lkh_param > /dev/null") # call atsp solver
+    best_tour = read_best_tour('data/tmp_best_tour')
+    return ' '.join([t.english for t in extract_phrases(nodes, best_tour)])
+
+def make_agtsp(f):
+    # make AGTSP
+    nodes = [Node(0.0, START_SYMBOL, -1, -1, 0, models.phrase('', 0.0))]
+    groups = defaultdict(list) # french word => [tsp_tuple, ...]
+    groups[nodes[0].word_index] = [nodes[0]] # add startword group
+    for i in xrange(len(f)):
+        for j in xrange(i+1,len(f)+1):
+            if f[i:j] in tm:
+                for phrase in tm[f[i:j]]:
+                    phrase = Phrase(phrase.english, phrase.logprob, random())
+                    for (i_w, word) in enumerate(f[i:j]):
+                        word_index = i+i_w
+                        n = Node(phrase.logprob, word, word_index, i, j, phrase)
+                        nodes.append(n)
+                        groups[word_index] = groups[word_index] + [n]
+    return nodes, groups
+
+def write_atsp(path, f, nodes, groups):
+    outfile = open(path, 'w')
+    outfile.write("NAME: %i\n" % hash(f))
+    outfile.write("TYPE: ATSP\n")
+    outfile.write("COMMENT: %s\n" % ' '.join(f))
+    outfile.write("DIMENSION: %i\n" % len(nodes))
+    outfile.write("EDGE_WEIGHT_TYPE: EXPLICIT\n")
+    outfile.write("EDGE_WEIGHT_FORMAT: FULL_MATRIX\n")
+    outfile.write("EDGE_WEIGHT_SECTION\n")
+    sentence_length = len(f)
+    # outfile.write(("\t%i" % MAX) + ("\t0"*len(nodes)) + "\n")
+    for node1 in nodes:
+        row = "\t"
+        for node2 in nodes:
+            weight = get_edge(groups, node1, node2, sentence_length)
+            if type(weight) == float:
+                weight = int(weight*1000) # keep first 3 decimal places
+            row += str(weight) + "\t"
+        outfile.write(row+"\n")
+    outfile.write("EOF\n")
+    outfile.close()
+
+def get_edge(groups, node1, node2, sentence_length):
+    if node1 == node2:
+        pass
+    elif groups[node1.word_index] == groups[node2.word_index]:
+        # convert agtsp group to atsp edges
+        i1 = groups[node1.word_index].index(node1)
+        i2 = groups[node2.word_index].index(node2)
+        if i2 == (i1+1) % len(groups[node1.word_index]):
+            return -K
+    else:
+        # convert agtsp to atsp connection
+        group = groups[node1.word_index]
+        ref_node = group[(group.index(node1) + 1) % len(group)]
+        if ref_node.biphrase == node2.biphrase:
+            if node2.word_index == ref_node.word_index + 1:
+                return 0
+        elif node2 in groups[-1]: # node2 is startnode
+            if ref_node.word_index == sentence_length - 1:
+                # going from end to start
+                return 0
+        elif node2.word_index == node2.i and ref_node.word_index + 1 == ref_node.j:
+            # phrase connection
+            distortion = float(abs(node2.i - ref_node.j)) / sentence_length
+            if distortion >= 1.0:
+                log_diagonality = -20
+            else:
+                log_diagonality = log(1-distortion)
+            # if node2.i == ref_node.j: # force diagonal translation
+            #     log_diagonality = 0
+            # else:
+            #     return MAX
+            prev_words = ref_node.biphrase.english.split()
+            lm_probs = get_lm_probs(prev_words, node2.biphrase.english.split())
+            return -(opts.l1*node2.logprob + opts.l2*lm_probs + opts.l3*log_diagonality)
+    return MAX
+
+def read_best_tour(path):
+    infile = open(path)
+    best_tour = [int(line) for line in infile.readlines()
+            if line.rstrip().isdigit()]
+    start_index = best_tour.index(1)
+    best_tour = best_tour[(start_index+1):] + best_tour[0:start_index]
+    infile.close()
+    return best_tour
+
+def extract_phrases(nodes, best_tour):
+    phrases = []
+    current_word_index = None
+    for i in best_tour:
+        node = nodes[i-1]
+        if node.word_index != current_word_index:
+            current_word_index = node.word_index
+            phrase = node.biphrase
+            if len(phrases) == 0 or phrase != phrases[-1]:
+                phrases.append(phrase)
+    return phrases
+
+def get_lm_probs(start_words, words):
+    lm_state = tuple([w for w in start_words if w in lm.table])
+    logprob = 0
+    for word in words:
+        (lm_state, word_logprob) = lm.score(lm_state, word)
+        logprob += word_logprob
+    return logprob
+
+for f in french:
+    print translate(f)
