@@ -48,8 +48,12 @@ advance, so that our language model has only a limited context to work on.
 This is especially a problem for one-word phrases which consist of
 out-of-dictionary words. A second problem might be that the \textsc{ATSP}
 solver does not guarantee the optimal solution, although we did not spot any
-obviously non-optimal solutions in our sample documents. In
-Figure~\ref{decode3}, we see the corpus log-probability of our decoder for
+obviously non-optimal solutions in our sample documents.
+Another, most likely cause of poor performance, might be an error in our implementation 
+of edge cost calculation. There are many factors which influence what kind of an edge connects 
+any two nodes in the graph -- are the nodes in the same cluster, do they share a phrase, is any 
+one of them the start-of-sentence-node, etc.
+In Figure~\ref{decode3}, we see the corpus log-probability of our decoder for
 various numbers of possible translations $k$.
 
 \begin{figure}
