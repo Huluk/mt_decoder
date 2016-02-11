@@ -1,3 +1,4 @@
+*.DS_Store
 *.pyc
 data/tmp*
 *.aux
@@ -5,5 +6,4 @@ data/tmp*
 *.blg
 *.fff
 *.lof
-*.pdf
 *.out

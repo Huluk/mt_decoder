@@ -1,8 +1,15 @@
 \section*{Q5}
 
-Our implementation of local reordering does not involve any changes to the hypotheses objects. We do modify the translation model by inserting into the dictionary an empty phrase, which translates to English with probability 1 as an empty string.
+Our implementation of local reordering does not involve any changes to the
+hypotheses objects. We modify the translation model by inserting an empty
+phrase which translates to English as an empty string with probability 1.
 
-We introduce a modification in the hypothesis extension step. Given a hypothesis which ends at index \textit{i} in the French sentence we consider all indices \textit{c} and \textit{j} such that $c \leq j$, $j \leq sentence length$, and the fragments of the sentence delimited by \textit{[i, c]} and \textit{[c, j]} are phrases. Since we allow for $c = j$, the second phrase may be the empty one we have added to the translation model. For each discovered pair of phrases we create a hypothesis by swapping them and considering k best translations for each. For a pair with an empty phrase this amounts to no reordering. The hypotheses we generate do not have gaps in coverage of the source sentence and can be simply placed on the stack corresponding to the last word covered.
-
-This approach provides for a simple implementation. We do not need to check if the hypothesis we are extending was or was not created by skipping a phrase. Each hypothesis we store was either created by reordering the last two phrases it covers, or by translating monotonically. In both cases we are free to reorder any next two consecutive phrases we find in the French sentence.
-
+We introduce a modification in the hypothesis extension step. Given a
+hypothesis which ends at index \textit{i} in the French sentence we consider
+all indices \textit{c} and \textit{j} such that $c \leq j$, $j \leq
+|sentence|$, and the fragments of the sentence delimited by \textit{[i, c]}
+and \textit{[c, j]} are phrases. Since we allow for $c = j$, the second
+phrase may be the empty one we have added to the translation model. For each
+discovered pair of phrases we create a hypothesis by swapping them and
+considering $k$ best translations for each. For a pair with an empty phrase
+this amounts to no reordering.
