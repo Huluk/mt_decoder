@@ -37,11 +37,9 @@ def update_lm_state(lm_state, logprob, phrase):
 
 sys.stderr.write("Decoding %s...\n" % (opts.input,))
 for f in french:
-    # The following code implements a monotone decoding
-    # algorithm (one that doesn't permute the target phrases).
-    # Hence all hypotheses in stacks[i] represent translations of
-    # the first i words of the input sentence. You should generalize
-    # this so that the decoder can consider swapping adjacent phrases.
+    # The following code implements a local-reordering decoding algorithm.
+    # All hypotheses in stacks[i] represent translations of the first i
+    # words of the input sentence.
     hypothesis = namedtuple("hypothesis", "logprob, lm_state, predecessor, phrase")
     initial_hypothesis = hypothesis(0.0, lm.begin(), None, None)
     stacks = [{} for _ in f] + [{}]

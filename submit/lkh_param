@@ -1,0 +1,2 @@
+PROBLEM_FILE = data/tmp.lkh
+TOUR_FILE = data/tmp_best_tour
