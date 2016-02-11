@@ -27,9 +27,9 @@
 %	DOCUMENT INFORMATION
 %----------------------------------------------------------------------------------------
 
-\title{ Machine Translation Assignment 2 : Decoding} % Title
+\title{Machine Translation Assignment 2: Decoding} % Title
 
-\author{s0907677, s152582} % Author name
+\author{s0907677, s1520582} % Author name
 
 \date{}
 
@@ -57,23 +57,13 @@ The conclusions to draw from these results are:
 \begin{figure}
 	\centering
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d1_change_k.png}
+		\includegraphics[scale=0.45]{d1_k.png}
 		\caption{Increasing maximum number of translations, range [1-100].}
 	\end{subfigure}
 	\hskip2em
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d1_change_k_to10.png}
-		\caption{Increasing maximum number of translations, range [1-10].}
-	\end{subfigure}
-	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d1_change_s.png}
+		\includegraphics[scale=0.45]{d1_s.png}
 		\caption{Increasing stack size, range [1-100].}
-	\end{subfigure}
-	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d1_change_s_to10.png}
-		\caption{Increasing stack size, range [1-10].}
 	\end{subfigure}
 	\caption{Performance of decoder without reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.}
 \end{figure}
@@ -122,13 +112,17 @@ For each French sentence of length $n$, we loop over all $n$ possible stacks. In
 %	Q 4
 %----------------------------------------------------------------------------------------
 \section*{Q4}
-
+In our implementation the mapping from hypotheses to stacks is the same in the decoder with local reordering as it was in the one without. Each hypothesis is placed on a stack corresponding to the index of last French word being translated. We do not create hypotheses in which French phrases are skipped, but instead always look at two consecutive phrases, swap then, and create a hypothesis which covers both phrases. This means that mapping onto stacks is straightforward, since the number of French words covered by a hypothesis is always the same as the index of the last word which it translates.
 
 %----------------------------------------------------------------------------------------
 %	Q 5
 %----------------------------------------------------------------------------------------
 \section*{Q5}
+Our implementation of local reordering does not involve any changes to the hypotheses objects. We do modify the translation model by inserting into the dictionary an empty phrase, which translates to English with probability 1 as an empty string.
 
+We introduce a modification in the hypothesis extension step. Given a hypothesis which ends at index \textit{i} in the French sentence we consider all indices \textit{c} and \textit{j} such that $c \leq j$, $j \leq sentence length$, and the fragments of the sentence delimited by \textit{[i, c]} and \textit{[c, j]} are phrases. Since we allow for $c = j$, the second phrase may be the empty one we have added to the translation model. For each discovered pair of phrases we create a hypothesis by swapping them and considering k best translations for each. For a pair with an empty phrase this amounts to no reordering. The hypotheses we generate do not have gaps in coverage of the source sentence and can be simply placed on the stack corresponding to the last word covered.
+
+This approach provides for a simple implementation. We do not need to check if the hypothesis we are extending was or was not created by skipping a phrase. Each hypothesis we store was either created by reordering the last two phrases it covers, or by translating monotonically. In both cases we are free to reorder any next two consecutive phrases we find in the French sentence.
 
 %----------------------------------------------------------------------------------------
 %	Q 6
@@ -139,23 +133,13 @@ For each French sentence of length $n$, we loop over all $n$ possible stacks. In
 \begin{figure}
 	\centering
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d2_change_k.png}
+		\includegraphics[scale=0.45]{d2_k.png}
 		\caption{Increasing maximum number of translations, range [1-100].}
 	\end{subfigure}
 	\hskip2em
 	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d2_change_k_to10.png}
-		\caption{Increasing maximum number of translations, range [1-10].}
-	\end{subfigure}
-	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d2_change_s.png}
+		\includegraphics[scale=0.45]{d2_s.png}
 		\caption{Increasing stack size, range [1-100].}
-	\end{subfigure}
-	\hskip2em
-	\begin{subfigure}{.45\linewidth}
-		\includegraphics[scale=0.45]{d2_change_s_to10.png}
-		\caption{Increasing stack size, range [1-10].}
 	\end{subfigure}
 	\caption{Performance of decoder with local reordering - total corpus log probability as a function of maximum number of translations per phrase and stack size.}
 \end{figure}
@@ -178,7 +162,7 @@ We transform a sentence into a asymmetric graph by following the procedure descr
 %----------------------------------------------------------------------------------------
 \bibliographystyle{apalike}
 
-\bibliography{sample}
+\bibliography{bibliography}
 
 %----------------------------------------------------------------------------------------
 

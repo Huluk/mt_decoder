@@ -21,14 +21,18 @@ optparser.add_option("-n", "--num_sentences", dest="num_sents", default=sys.maxi
         type="int", help="Number of sentences to decode (default=no limit)")
 optparser.add_option("-k", "--translations-per-phrase", dest="k", default=1, type="int",
         help="Limit on number of translations to consider per phrase (default=1)")
-# optparser.add_option("-K", "--negative-cycle-cost", dest="K", default=1, type="float",
-#         help="Cost subtracted for each step in a group cycle in AGTSP->STSP (default=1)")
 optparser.add_option("-v", "--verbose", dest="verbose", action="store_true",
         default=False, help="Verbose mode (default=off)")
+optparser.add_option("-1", "--lambda1", dest="l1", default=1, type="float",
+        help="Lambda 1 (translation model)")
+optparser.add_option("-2", "--lambda2", dest="l2", default=1, type="float",
+        help="Lambda 2 (language model)")
+optparser.add_option("-3", "--lambda3", dest="l3", default=1, type="float",
+        help="Lambda 3 (translation model)")
 opts = optparser.parse_args()[0]
 
 tm = models.TM(opts.tm, opts.k)
-lm = models.LM(opts.lm) # assumes bigram model!
+lm = models.LM(opts.lm)
 french = [tuple(line.strip().split()) for line in open(opts.input).readlines()[:opts.num_sents]]
 
 # tm should translate unknown words as-is with probability 1
@@ -42,6 +46,13 @@ START_SYMBOL = '<s>'
 MAX = 9999999
 
 def translate(f):
+    nodes, groups = make_agtsp(f)
+    write_atsp("data/tmp.lkh", f, nodes, groups)
+    os.system("./LKH lkh_param > /dev/null") # call atsp solver
+    best_tour = read_best_tour('data/tmp_best_tour')
+    return ' '.join([t.english for t in extract_phrases(nodes, best_tour)])
+
+def make_agtsp(f):
     # make AGTSP
     nodes = [Node(0.0, START_SYMBOL, -1, -1, 0, models.phrase('', 0.0))]
     groups = defaultdict(list) # french word => [tsp_tuple, ...]
@@ -56,15 +67,10 @@ def translate(f):
                         n = Node(phrase.logprob, word, word_index, i, j, phrase)
                         nodes.append(n)
                         groups[word_index] = groups[word_index] + [n]
-                        # we can infer graph connection by index:
-                        # connections from j to i' for group(j) != group(i')
-                        # with edge cost: 1/Z * exp(lambda_k * h_k)
-                        # with h = (p_lm, distortion(i',j), phrase.logprob)
-                        # and distortion(x,y) = |x-y-1|
-                        # connections from i to k for all k in [i+1,j]
-                        # with edge cost: p_lm(eng'_first|eng_last) or 0
-    # make ATSP, write LKH format
-    outfile = open("data/tmp.lkh", 'w')
+    return nodes, groups
+
+def write_atsp(path, f, nodes, groups):
+    outfile = open(path, 'w')
     outfile.write("NAME: %i\n" % hash(f))
     outfile.write("TYPE: ATSP\n")
     outfile.write("COMMENT: %s\n" % ' '.join(f))
@@ -79,55 +85,46 @@ def translate(f):
         for node2 in nodes:
             weight = get_edge(groups, node1, node2, sentence_length)
             if type(weight) == float:
-                weight = int(weight*100) # keep first 2 decimal places
+                weight = int(weight*1000) # keep first 3 decimal places
             row += str(weight) + "\t"
         outfile.write(row+"\n")
     outfile.write("EOF\n")
     outfile.close()
-    os.system("./LKH lkh_param > /dev/null")
-    best_tour = read_best_tour('data/tmp_best_tour')
-    current_word_index = None
-    translation = []
-    for i in best_tour:
-        node = nodes[i-1]
-        if node.word_index != current_word_index:
-            current_word_index = node.word_index
-            phrase = node.biphrase
-            if len(translation) == 0 or phrase != translation[-1]:
-                translation.append(phrase)
-    return ' '.join([t.english for t in translation])
 
 def get_edge(groups, node1, node2, sentence_length):
     if node1 == node2:
         pass
     elif groups[node1.word_index] == groups[node2.word_index]:
+        # convert agtsp group to atsp edges
         i1 = groups[node1.word_index].index(node1)
         i2 = groups[node2.word_index].index(node2)
         if i2 == (i1+1) % len(groups[node1.word_index]):
             return -MAX # -K
     else:
+        # convert agtsp to atsp connection
         group = groups[node1.word_index]
-        i = group.index(node1)
-        ref_node = group[(i + 1) % len(group)]
+        ref_node = group[(group.index(node1) + 1) % len(group)]
         if ref_node.biphrase == node2.biphrase:
             if node2.word_index == ref_node.word_index + 1:
                 return 0
-        elif node2 in groups[-1]:
+        elif node2 in groups[-1]: # node2 is startnode
             if ref_node.word_index == sentence_length - 1:
                 # going from end to start
                 return 0
         elif node2.word_index == node2.i and ref_node.word_index + 1 == ref_node.j:
-            distortion = float(abs(node2.i - ref_node.j - 1)) / sentence_length
+            # phrase connection
+            distortion = float(abs(node2.i - ref_node.j)) / sentence_length
             if distortion >= 1.0:
-                log_diagonality = -100
+                log_diagonality = -20
             else:
                 log_diagonality = log(1-distortion)
-            if ref_node in groups[-1]:
-                lm_probs = 0.0
-            else:
-                prev_word = ref_node.biphrase.english.split()[-1]
-                lm_probs = get_lm_probs(prev_word, node2.biphrase.english.split())
-            return -(node2.logprob + lm_probs + log_diagonality)
+            # if node2.i == ref_node.j: # force diagonal translation
+            #     log_diagonality = 0
+            # else:
+            #     return MAX
+            prev_words = ref_node.biphrase.english.split()
+            lm_probs = get_lm_probs(prev_words, node2.biphrase.english.split())
+            return -(opts.l1*node2.logprob + opts.l2*lm_probs + opts.l3*log_diagonality)
     return MAX
 
 def read_best_tour(path):
@@ -139,14 +136,25 @@ def read_best_tour(path):
     infile.close()
     return best_tour
 
-def get_lm_probs(start_word, words):
-    lm_state = (start_word,) if start_word in lm.table else ()
+def extract_phrases(nodes, best_tour):
+    phrases = []
+    current_word_index = None
+    for i in best_tour:
+        node = nodes[i-1]
+        if node.word_index != current_word_index:
+            current_word_index = node.word_index
+            phrase = node.biphrase
+            if len(phrases) == 0 or phrase != phrases[-1]:
+                phrases.append(phrase)
+    return phrases
+
+def get_lm_probs(start_words, words):
+    lm_state = tuple([w for w in start_words if w in lm.table])
     logprob = 0
     for word in words:
         (lm_state, word_logprob) = lm.score(lm_state, word)
         logprob += word_logprob
-        lm_state = (word,)
     return logprob
 
-for f in french[22:23]:
+for f in french:
     print translate(f)
