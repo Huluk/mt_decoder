@@ -45,9 +45,11 @@ default non-swapping decoder, as measured by \texttt{compute-model-score}.
 A possible difficulty lies in the fact that our edge costs are calculated in
 advance, so that our language model has only a limited context to work on.
 This is especially a problem for one-word phrases which consist of
-out-of-dictionary words. In Figure~\ref{decode3}, we see the corpus
-log-probability of our decoder for various numbers of possible translations
-$k$.\todo{include figure!}
+out-of-dictionary words. A second problem might be that the \textsc{ATSP}
+solver does not guarantee the optimal solution, although we did not spot any
+obviously non-optimal solutions in our sample documents. In
+Figure~\ref{decode3}, we see the corpus log-probability of our decoder for
+various numbers of possible translations $k$.\todo{include figure!}
 
 \begin{figure}
     \centering{}
