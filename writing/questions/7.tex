@@ -41,7 +41,8 @@ do no follow the article in further transforming the ATPS graph to a STPS one.
 Instead we use a solver which implements the same algorithm as the one used 
 in the article, but can operate on the directed \textsc{ATSP}s.
 
-The proposed model does not reach the same translation quality as the
+Qualitatively, the results look similar to the output of the simple decoder,
+but the proposed model does not reach the same translation quality as the
 default non-swapping decoder, as measured by \texttt{compute-model-score}.
 A possible difficulty lies in the fact that our edge costs are calculated in
 advance, so that our language model has only a limited context to work on.
